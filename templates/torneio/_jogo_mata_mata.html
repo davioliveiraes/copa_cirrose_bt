@@ -1,0 +1,16 @@
+<article class="match-card {% if jogo.vencedor %}preenchido{% endif %}" data-jogo-id="{{ jogo.id }}">
+    <div class="match-title">{{ titulo }}</div>
+    {% if jogo.dupla_a and jogo.dupla_b %}
+        <div class="match-row">
+            <span>{{ jogo.dupla_a.nome }}</span>
+            <input type="number" min="0" max="3" data-lado="a" value="{{ jogo.sets_a|default_if_none:'' }}" aria-label="Sets {{ jogo.dupla_a.nome }}">
+        </div>
+        <div class="match-row">
+            <span>{{ jogo.dupla_b.nome }}</span>
+            <input type="number" min="0" max="3" data-lado="b" value="{{ jogo.sets_b|default_if_none:'' }}" aria-label="Sets {{ jogo.dupla_b.nome }}">
+        </div>
+        <button class="text-button" data-clear="{{ jogo.id }}" type="button">limpar</button>
+    {% else %}
+        <p class="pending-text">{{ aguardando }}</p>
+    {% endif %}
+</article>

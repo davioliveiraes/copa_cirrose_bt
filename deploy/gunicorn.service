@@ -1,0 +1,16 @@
+[Unit]
+Description=Gunicorn Copa Cirrose BT
+After=network.target
+
+[Service]
+User=root
+Group=www-data
+WorkingDirectory=/home/copa_cirrose_bt
+Environment="PATH=/home/copa_cirrose_bt/venv/bin"
+ExecStart=/home/copa_cirrose_bt/venv/bin/gunicorn \
+    --workers 2 \
+    --bind unix:/home/copa_cirrose_bt/copa.sock \
+    copa_project.wsgi:application
+
+[Install]
+WantedBy=multi-user.target

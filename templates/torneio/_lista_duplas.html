@@ -1,0 +1,16 @@
+<div class="team-grid" data-count="{{ duplas.count }}">
+    {% for dupla in duplas %}
+        <article class="team-card">
+            <span class="team-number">{{ forloop.counter|stringformat:"02d" }}</span>
+            <strong>{{ dupla.nome }}</strong>
+            {% if torneio.status == torneio.STATUS_SETUP %}
+                <form method="post" action="{% url 'torneio:remover_dupla' dupla.id %}">
+                    {% csrf_token %}
+                    <button class="icon-button danger" type="button" data-remover="{{ dupla.id }}" aria-label="Remover {{ dupla.nome }}">×</button>
+                </form>
+            {% endif %}
+        </article>
+    {% empty %}
+        <div class="empty-state">Nenhuma dupla cadastrada ainda.</div>
+    {% endfor %}
+</div>

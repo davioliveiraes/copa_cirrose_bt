@@ -1,0 +1,717 @@
+:root {
+    --bg: #fafaf7;
+    --surface: #ffffff;
+    --border: #e8e6df;
+    --text: #1a1a1a;
+    --text-soft: #6b6b6b;
+    --text-mute: #999999;
+    --accent: #c2410c;
+    --accent-soft: #fdf2eb;
+    --success: #166534;
+    --success-soft: #dcfce7;
+    --gold: #ca8a04;
+    --danger: #dc2626;
+    --radius: 8px;
+}
+
+* {
+    box-sizing: border-box;
+}
+
+html {
+    background: var(--bg);
+}
+
+body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    line-height: 1.5;
+    overflow-x: hidden;
+}
+
+button,
+input {
+    font: inherit;
+}
+
+button {
+    border: 0;
+}
+
+input {
+    min-width: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    color: var(--text);
+}
+
+input:focus {
+    border-color: var(--accent);
+    outline: 3px solid rgba(194, 65, 12, 0.14);
+}
+
+button:disabled {
+    cursor: not-allowed;
+    opacity: 0.48;
+}
+
+code,
+.counter,
+.status-pill,
+.team-number,
+.jogo-num,
+.placar input,
+.standings-table th,
+.standings-table td,
+.match-row input,
+.dose-card strong {
+    font-family: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.app-shell {
+    width: min(1280px, calc(100% - 32px));
+    margin: 0 auto;
+    padding: 32px 0 44px;
+}
+
+.hero {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+    min-width: 0;
+    padding: 24px 0;
+    border-bottom: 1px solid var(--border);
+}
+
+.hero h1 {
+    margin: 0;
+    font-size: clamp(2rem, 8.5vw, 4.75rem);
+    line-height: 0.95;
+    letter-spacing: 0;
+    overflow-wrap: anywhere;
+}
+
+.tagline {
+    max-width: calc(100vw - 32px);
+    margin: 12px 0 0;
+    color: var(--text-soft);
+    font-size: 1rem;
+    overflow-wrap: anywhere;
+}
+
+.meta-line {
+    display: grid;
+    gap: 3px;
+}
+
+.meta-line span {
+    display: inline-flex;
+}
+
+.meta-line span:not(:last-child)::after {
+    content: "";
+    margin-left: 0;
+}
+
+.eyebrow {
+    margin: 0 0 8px;
+    color: var(--accent);
+    font-size: 0.72rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.status-pill {
+    align-self: flex-start;
+    display: inline-flex;
+    align-items: center;
+    min-height: 34px;
+    padding: 0 12px;
+    border: 1px solid rgba(194, 65, 12, 0.24);
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    font-size: 0.78rem;
+    font-weight: 800;
+}
+
+.status-pill.live {
+    border-color: rgba(22, 101, 52, 0.26);
+    background: var(--success-soft);
+    color: var(--success);
+}
+
+.section-grid,
+.content-grid,
+.rule-grid,
+.dose-grid,
+.knockout-grid {
+    display: grid;
+    gap: 16px;
+}
+
+.section-grid,
+.content-grid,
+.rule-grid,
+.dose-grid {
+    margin-top: 28px;
+}
+
+.surface-card,
+.rule-card,
+.dose-card,
+.team-card,
+.match-card,
+.winner-card {
+    min-width: 0;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+}
+
+.surface-card {
+    padding: 22px;
+}
+
+.section-title {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 18px;
+}
+
+.section-title h2,
+.info-box h2,
+.rule-card h2 {
+    margin: 0;
+    font-size: 1.15rem;
+    letter-spacing: 0;
+}
+
+.counter {
+    white-space: nowrap;
+    color: var(--text-soft);
+    font-size: 0.84rem;
+}
+
+.add-team-form {
+    display: grid;
+    gap: 10px;
+}
+
+.add-team-form input {
+    width: 100%;
+    min-height: 48px;
+    padding: 0 14px;
+}
+
+.add-team-form button,
+.start-button,
+.secondary-button,
+.danger-button {
+    min-height: 48px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-weight: 800;
+}
+
+.add-team-form button,
+.start-button {
+    background: var(--accent);
+    color: #ffffff;
+}
+
+.feedback {
+    min-height: 22px;
+    margin: 10px 0 0;
+    color: var(--text-soft);
+    font-size: 0.88rem;
+}
+
+.feedback.error {
+    color: var(--danger);
+}
+
+.team-grid {
+    display: grid;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.team-card {
+    display: grid;
+    grid-template-columns: auto minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 12px;
+    min-height: 58px;
+    padding: 10px 12px;
+}
+
+.team-card strong {
+    overflow-wrap: anywhere;
+}
+
+.team-number {
+    color: var(--accent);
+    font-size: 0.88rem;
+    font-weight: 800;
+}
+
+.icon-button {
+    display: inline-grid;
+    width: 34px;
+    height: 34px;
+    place-items: center;
+    border-radius: var(--radius);
+    cursor: pointer;
+    font-size: 1.1rem;
+    font-weight: 800;
+}
+
+.icon-button.danger,
+.danger-button {
+    background: #fef2f2;
+    color: var(--danger);
+}
+
+.empty-state,
+.setup-warning,
+.pending-text {
+    color: var(--text-mute);
+    font-style: italic;
+}
+
+.setup-warning {
+    margin: 16px 0 0;
+}
+
+.is-hidden {
+    display: none;
+}
+
+.info-box ul {
+    display: grid;
+    gap: 12px;
+    margin: 14px 0 0;
+    padding-left: 20px;
+    color: var(--text-soft);
+}
+
+.info-box li {
+    white-space: nowrap;
+}
+
+.formula-box {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 22px;
+    padding: 14px;
+    border-radius: var(--radius);
+    background: var(--accent-soft);
+}
+
+.formula-box span {
+    color: var(--text-soft);
+    font-weight: 700;
+}
+
+.formula-box strong {
+    color: var(--accent);
+    font-size: 1.8rem;
+}
+
+.start-form {
+    margin-top: 20px;
+}
+
+.start-button {
+    width: 100%;
+    min-height: 60px;
+    font-size: 1rem;
+}
+
+.footer-note {
+    margin-top: 28px;
+    color: var(--text-mute);
+    font-size: 0.85rem;
+    text-align: center;
+}
+
+.rule-card {
+    padding: 16px;
+}
+
+.rule-card span {
+    color: var(--accent);
+    font-weight: 800;
+}
+
+.rule-card.gold span,
+.rule-card.gold h2 {
+    color: var(--gold);
+}
+
+.rule-card p {
+    display: block;
+    max-width: calc(100vw - 64px);
+    margin: 8px 0 0;
+    color: var(--text-soft);
+    overflow-wrap: anywhere;
+    word-break: normal;
+}
+
+.dose-card {
+    display: grid;
+    gap: 4px;
+    padding: 14px;
+    background: var(--accent-soft);
+}
+
+.dose-card strong {
+    color: var(--accent);
+    font-size: 1.35rem;
+}
+
+.dose-card span {
+    display: block;
+    max-width: calc(100vw - 64px);
+    color: var(--text-soft);
+    font-size: 0.88rem;
+    overflow-wrap: anywhere;
+}
+
+.games-list {
+    display: grid;
+    gap: 10px;
+}
+
+.jogo {
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    gap: 8px;
+    align-items: center;
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: #fffdfb;
+}
+
+.jogo.preenchido,
+.match-card.preenchido {
+    border-color: rgba(22, 101, 52, 0.28);
+    background: var(--success-soft);
+}
+
+.jogo-num {
+    color: var(--text-mute);
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+.dupla {
+    min-width: 0;
+    overflow-wrap: anywhere;
+    font-weight: 700;
+}
+
+.dupla.right {
+    grid-column: 2 / 3;
+}
+
+.placar {
+    grid-column: 1 / 3;
+    display: grid;
+    grid-template-columns: 44px auto 44px;
+    align-items: center;
+    justify-content: start;
+    gap: 8px;
+}
+
+.placar input,
+.match-row input {
+    width: 44px;
+    height: 40px;
+    padding: 0;
+    text-align: center;
+    font-weight: 800;
+}
+
+.placar span {
+    color: var(--text-soft);
+    font-weight: 800;
+}
+
+.delete-btn {
+    grid-column: 3 / 4;
+    grid-row: 1 / 3;
+    width: 34px;
+    height: 34px;
+    border-radius: var(--radius);
+    background: #fef2f2;
+    color: var(--danger);
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+.table-wrap {
+    overflow-x: visible;
+}
+
+.standings-table {
+    width: 100%;
+    min-width: 0;
+    border-collapse: collapse;
+    table-layout: fixed;
+}
+
+.standings-table th,
+.standings-table td {
+    padding: 8px 4px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    font-size: 0.72rem;
+    white-space: nowrap;
+}
+
+.standings-table th {
+    color: var(--text-mute);
+    text-transform: uppercase;
+}
+
+.standings-table td:nth-child(n+3),
+.standings-table th:nth-child(n+3) {
+    text-align: center;
+}
+
+.standings-table th:first-child,
+.standings-table td:first-child {
+    width: 42px;
+}
+
+.standings-table th:nth-child(2),
+.standings-table td:nth-child(2) {
+    overflow: hidden;
+    min-width: 0;
+    text-overflow: ellipsis;
+}
+
+.standings-table th:nth-child(n+3),
+.standings-table td:nth-child(n+3) {
+    width: 30px;
+}
+
+.standings-table th:last-child,
+.standings-table td:last-child {
+    width: 38px;
+}
+
+.standings-table .classificado {
+    background: var(--success-soft);
+}
+
+.check {
+    color: var(--success);
+    font-family: "Inter", sans-serif;
+    font-weight: 900;
+}
+
+.knockout-section {
+    margin-top: 16px;
+}
+
+.knockout-grid {
+    grid-template-columns: 1fr;
+}
+
+.knockout-column {
+    display: grid;
+    gap: 12px;
+}
+
+.match-card {
+    padding: 14px;
+}
+
+.match-title {
+    margin-bottom: 12px;
+    color: var(--gold);
+    font-weight: 800;
+}
+
+.match-row {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+    align-items: center;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.match-row span {
+    overflow-wrap: anywhere;
+    font-weight: 700;
+}
+
+.text-button {
+    margin-top: 10px;
+    padding: 0;
+    background: transparent;
+    color: var(--text-soft);
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 800;
+}
+
+.winner-card {
+    display: grid;
+    gap: 8px;
+    min-height: 116px;
+    align-content: center;
+    padding: 18px;
+}
+
+.winner-card span {
+    color: var(--text-soft);
+    font-size: 0.76rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+}
+
+.winner-card strong {
+    overflow-wrap: anywhere;
+    font-size: 1.3rem;
+}
+
+.winner-card.champion {
+    border-color: rgba(202, 138, 4, 0.38);
+    background: #fffbeb;
+}
+
+.winner-card.champion strong {
+    color: var(--gold);
+}
+
+.action-row {
+    display: grid;
+    gap: 10px;
+    margin-top: 16px;
+}
+
+.secondary-button {
+    width: 100%;
+    border: 1px solid var(--border);
+    background: var(--surface);
+    color: var(--text);
+}
+
+.danger-button {
+    width: 100%;
+}
+
+@media (min-width: 640px) {
+    .app-shell {
+        width: min(1280px, calc(100% - 96px));
+        padding-top: 44px;
+    }
+
+    .hero {
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: space-between;
+        padding: 34px 0;
+    }
+
+    .tagline {
+        max-width: 680px;
+        font-size: 1.08rem;
+    }
+
+    .meta-line {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 4px 10px;
+    }
+
+    .meta-line span:not(:last-child)::after {
+        content: "·";
+        margin-left: 10px;
+        color: var(--text-mute);
+    }
+
+    .rule-card p,
+    .dose-card span {
+        max-width: none;
+    }
+
+    .section-grid {
+        grid-template-columns: minmax(0, 1fr) minmax(440px, 0.52fr);
+        gap: 24px;
+    }
+
+    .add-team-form {
+        grid-template-columns: minmax(0, 1fr) auto;
+    }
+
+    .team-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .rule-grid,
+    .dose-grid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .content-grid {
+        grid-template-columns: minmax(0, 1.18fr) minmax(430px, 0.82fr);
+        gap: 24px;
+        align-items: start;
+    }
+
+    .standings-table th,
+    .standings-table td {
+        padding: 9px 5px;
+        font-size: 0.76rem;
+    }
+
+    .jogo {
+        grid-template-columns: auto minmax(120px, 1fr) auto minmax(120px, 1fr) auto;
+    }
+
+    .dupla.right,
+    .placar,
+    .delete-btn {
+        grid-column: auto;
+    }
+
+    .delete-btn {
+        grid-row: auto;
+    }
+
+    .knockout-grid {
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(220px, 0.8fr);
+    }
+
+    .final-column,
+    .winners-column {
+        align-content: center;
+    }
+
+    .action-row {
+        grid-template-columns: minmax(0, 1fr) minmax(220px, auto);
+        align-items: center;
+    }
+}
+
+@media (max-width: 639px) {
+    .info-box li {
+        white-space: normal;
+    }
+}

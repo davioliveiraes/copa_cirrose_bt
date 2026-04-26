@@ -1,0 +1,74 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Setup | Copa Cirrose BT{% endblock %}
+
+{% block content %}
+<main class="app-shell setup-shell">
+    <header class="hero">
+        <div>
+            <p class="eyebrow">Beach Tennis · Torneio dinamico</p>
+            <h1>Copa Cirrose BT</h1>
+            <p class="tagline">Cadastre as duplas, gere todos os confrontos e acompanhe a disputa ate a final.</p>
+        </div>
+        <span class="status-pill">EM SETUP</span>
+    </header>
+
+    <section class="section-grid">
+        <div class="surface-card setup-main">
+            <div class="section-title">
+                <div>
+                    <p class="eyebrow">Inscricoes</p>
+                    <h2>Duplas cadastradas</h2>
+                </div>
+                <strong id="contador-duplas" class="counter">{{ duplas.count }} duplas cadastradas</strong>
+            </div>
+
+            <form id="form-dupla" class="add-team-form" method="post" action="{% url 'torneio:adicionar_dupla' %}">
+                {% csrf_token %}
+                <input type="text" name="nome" placeholder="Ex: Davi & Ildeon" maxlength="100" required autocomplete="off">
+                <button type="submit">+ Adicionar Dupla</button>
+            </form>
+            <p id="setup-feedback" class="feedback" role="status" aria-live="polite"></p>
+
+            <div id="lista-duplas">
+                {% include 'torneio/_lista_duplas.html' %}
+            </div>
+
+            <p id="minimo-duplas" class="setup-warning {% if pode_iniciar %}is-hidden{% endif %}">
+                Adicione pelo menos 4 duplas pra iniciar.
+            </p>
+        </div>
+
+        <aside class="surface-card info-box">
+            <p class="eyebrow">Regra rapida</p>
+            <h2>Como vai funcionar</h2>
+            <ul>
+                <li>Minimo de 4 duplas para iniciar.</li>
+                <li>Total de jogos calculado automaticamente: <code>N x (N-1) / 2</code>.</li>
+                <li>Os 4 primeiros classificam para o mata-mata.</li>
+                <li>Depois de iniciar, nao e possivel adicionar ou remover duplas.</li>
+            </ul>
+            <div class="formula-box">
+                <span>Jogos previstos</span>
+                <strong id="jogos-previstos">{{ jogos_previstos }}</strong>
+            </div>
+        </aside>
+    </section>
+
+    <form id="form-iniciar" class="start-form" method="post" action="{% url 'torneio:iniciar_torneio' %}">
+        {% csrf_token %}
+        <button id="btn-iniciar" class="start-button" type="submit" {% if not pode_iniciar %}disabled{% endif %}>
+            Iniciar Torneio
+        </button>
+    </form>
+
+    <footer class="footer-note">
+        Copa Cirrose BT · Django puro · SQLite
+    </footer>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/setup.js' %}"></script>
+{% endblock %}

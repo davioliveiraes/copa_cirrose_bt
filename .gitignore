@@ -1,0 +1,9 @@
+.env
+db.sqlite3
+venv/
+__pycache__/
+*.py[cod]
+staticfiles/
+.DS_Store
+prompt_esboco.md
+codex_resume.txt

@@ -1,0 +1,175 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}Placar | Copa Cirrose BT{% endblock %}
+
+{% block content %}
+<main class="app-shell scoreboard-shell">
+    <header class="hero">
+        <div>
+            <p class="eyebrow">Torneio em andamento</p>
+            <h1>{{ torneio.nome }}</h1>
+            <p class="tagline meta-line">
+                <span>{{ torneio.duplas.count }} duplas</span>
+                <span>{{ jogos_grupos.count }} jogos · grupos</span>
+                <span>Bo5 melhor de 5 sets</span>
+            </p>
+        </div>
+        <span class="status-pill live">AO VIVO</span>
+    </header>
+
+    <section class="rule-grid">
+        <article class="rule-card">
+            <span>01</span>
+            <h2>Grupos</h2>
+            <p>Todos contra todos. Vitoria vale 3 pontos.</p>
+        </article>
+        <article class="rule-card gold">
+            <span>02</span>
+            <h2>Mata-Mata</h2>
+            <p>1o x 4o e 2o x 3o. Final apos as semis.</p>
+        </article>
+        <article class="rule-card">
+            <span>03</span>
+            <h2>Doses</h2>
+            <p>Apenas visual. Nao altera a classificacao.</p>
+        </article>
+    </section>
+
+    <section class="dose-grid" aria-label="Tabela de doses">
+        <article class="dose-card">
+            <strong>3x0</strong>
+            <span>Perdedor 3 doses · vencedor 1 dose</span>
+        </article>
+        <article class="dose-card">
+            <strong>3x1</strong>
+            <span>Perdedor 2 doses · vencedor 1 dose</span>
+        </article>
+        <article class="dose-card">
+            <strong>3x2</strong>
+            <span>Perdedor 2 doses · vencedor 1 dose</span>
+        </article>
+    </section>
+
+    <section class="content-grid">
+        <div class="surface-card games-panel">
+            <div class="section-title">
+                <div>
+                    <p class="eyebrow">Round-robin</p>
+                    <h2>Fase de Grupos</h2>
+                </div>
+                <span id="placar-feedback" class="feedback" role="status" aria-live="polite"></span>
+            </div>
+
+            <div class="games-list">
+                {% for jogo in jogos_grupos %}
+                    <div class="jogo {% if jogo.preenchido %}preenchido{% endif %}" data-jogo-id="{{ jogo.id }}">
+                        <div class="jogo-num">#{{ jogo.numero|stringformat:"02d" }}</div>
+                        <div class="dupla left">{{ jogo.dupla_a.nome }}</div>
+                        <div class="placar">
+                            <input type="number" min="0" max="3" data-lado="a" value="{{ jogo.sets_a|default_if_none:'' }}" aria-label="Sets {{ jogo.dupla_a.nome }}">
+                            <span>x</span>
+                            <input type="number" min="0" max="3" data-lado="b" value="{{ jogo.sets_b|default_if_none:'' }}" aria-label="Sets {{ jogo.dupla_b.nome }}">
+                        </div>
+                        <div class="dupla right">{{ jogo.dupla_b.nome }}</div>
+                        <button class="delete-btn" data-clear="{{ jogo.id }}" type="button" aria-label="Limpar jogo {{ jogo.numero }}">×</button>
+                    </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <aside class="surface-card standings-panel">
+            <div class="section-title">
+                <div>
+                    <p class="eyebrow">Tabela</p>
+                    <h2>Classificacao</h2>
+                </div>
+            </div>
+            <div class="table-wrap">
+                <table class="standings-table">
+                    <thead>
+                        <tr>
+                            <th>Pos</th>
+                            <th>Dupla</th>
+                            <th>J</th>
+                            <th>V</th>
+                            <th>D</th>
+                            <th>SF</th>
+                            <th>SC</th>
+                            <th>SS</th>
+                            <th>Pts</th>
+                        </tr>
+                    </thead>
+                    <tbody id="classificacao-body">
+                        {% for d in classificacao %}
+                            <tr class="{% if forloop.counter <= 4 %}classificado{% endif %}">
+                                <td>
+                                    {{ forloop.counter|stringformat:"02d" }}
+                                    {% if forloop.counter <= 4 %}<span class="check">✓</span>{% endif %}
+                                </td>
+                                <td>{{ d.nome }}</td>
+                                <td>{{ d.j }}</td>
+                                <td>{{ d.v }}</td>
+                                <td>{{ d.d }}</td>
+                                <td>{{ d.sf }}</td>
+                                <td>{{ d.sc }}</td>
+                                <td>{{ d.ss }}</td>
+                                <td><strong>{{ d.pts }}</strong></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </aside>
+    </section>
+
+    <section class="surface-card knockout-section">
+        <div class="section-title">
+            <div>
+                <p class="eyebrow">Top 4</p>
+                <h2>Mata-Mata</h2>
+            </div>
+        </div>
+
+        <div id="mata-mata-grid" class="knockout-grid">
+            <div class="knockout-column">
+                {% include 'torneio/_jogo_mata_mata.html' with titulo='SF1 · 1o x 4o' jogo=mata_mata.sf1 aguardando='aguardando grupos' %}
+                {% include 'torneio/_jogo_mata_mata.html' with titulo='SF2 · 2o x 3o' jogo=mata_mata.sf2 aguardando='aguardando grupos' %}
+            </div>
+
+            <div class="knockout-column final-column">
+                {% include 'torneio/_jogo_mata_mata.html' with titulo='Final' jogo=mata_mata.final aguardando='aguardando SF1 e SF2' %}
+            </div>
+
+            <div class="knockout-column winners-column">
+                <article class="winner-card champion">
+                    <span>Campeao</span>
+                    <strong id="campeao-nome">{% if mata_mata.campeao %}{{ mata_mata.campeao.nome }}{% else %}aguardando final{% endif %}</strong>
+                </article>
+                <article class="winner-card">
+                    <span>Vice</span>
+                    <strong id="vice-nome">{% if mata_mata.vice %}{{ mata_mata.vice.nome }}{% else %}aguardando final{% endif %}</strong>
+                </article>
+            </div>
+        </div>
+    </section>
+
+    <section class="action-row">
+        <button id="btn-exportar" class="secondary-button" type="button" data-export-url="{% url 'torneio:exportar' %}">
+            Exportar Relatório
+        </button>
+        <form id="form-reiniciar" method="post" action="{% url 'torneio:reiniciar_torneio' %}">
+            {% csrf_token %}
+            <button class="danger-button" type="submit">Reiniciar Torneio</button>
+        </form>
+    </section>
+
+    <footer class="footer-note">
+        Copa Cirrose BT · placares salvos automaticamente
+    </footer>
+</main>
+{% endblock %}
+
+{% block scripts %}
+<script src="{% static 'js/placar.js' %}"></script>
+{% endblock %}
