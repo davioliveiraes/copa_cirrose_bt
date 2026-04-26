@@ -40,7 +40,7 @@ if [ ! -f .env ]; then
 SECRET_KEY=$SECRET
 DEBUG=False
 ALLOWED_HOSTS=*
-FORCE_SCRIPT_NAME=/copa_cirrose_bt
+URL_PATH_PREFIX=copa_cirrose_bt
 EOF
 fi
 
@@ -56,7 +56,8 @@ set_env_var() {
 
 set_env_var DEBUG False
 set_env_var ALLOWED_HOSTS '*'
-set_env_var FORCE_SCRIPT_NAME /copa_cirrose_bt
+set_env_var URL_PATH_PREFIX copa_cirrose_bt
+set_env_var FORCE_SCRIPT_NAME ''
 
 # Migrations + collectstatic
 python manage.py migrate --noinput

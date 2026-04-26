@@ -32,7 +32,7 @@ ALLOWED_HOSTS = config(
     cast=Csv(),
 )
 
-FORCE_SCRIPT_NAME = config('FORCE_SCRIPT_NAME', default='') or None
+URL_PATH_PREFIX = config('URL_PATH_PREFIX', default='').strip('/')
 
 
 # Application definition
@@ -124,8 +124,7 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-URL_PREFIX = FORCE_SCRIPT_NAME.rstrip('/') if FORCE_SCRIPT_NAME else ''
-STATIC_URL = f'{URL_PREFIX}/static/' if URL_PREFIX else 'static/'
+STATIC_URL = f'/{URL_PATH_PREFIX}/static/' if URL_PATH_PREFIX else 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 

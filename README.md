@@ -39,7 +39,7 @@ Variaveis principais do `.env`:
 SECRET_KEY=sua-chave-secreta
 DEBUG=True
 ALLOWED_HOSTS=localhost,127.0.0.1
-FORCE_SCRIPT_NAME=
+URL_PATH_PREFIX=
 ```
 
 ## Fluxo de Uso

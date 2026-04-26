@@ -306,6 +306,10 @@ code,
     white-space: nowrap;
 }
 
+.info-box {
+    min-width: max-content;
+}
+
 .formula-box {
     display: flex;
     align-items: center;
@@ -652,7 +656,7 @@ code,
     }
 
     .section-grid {
-        grid-template-columns: minmax(0, 1fr) minmax(440px, 0.52fr);
+        grid-template-columns: minmax(0, 1fr) max-content;
         gap: 24px;
     }
 

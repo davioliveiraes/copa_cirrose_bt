@@ -15,9 +15,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
+from django.conf import settings
 from django.urls import include, path
 
-urlpatterns = [
-    path('', include('torneio.urls')),
-    path('admin/', admin.site.urls),
-]
+if settings.URL_PATH_PREFIX:
+    urlpatterns = [
+        path(f'{settings.URL_PATH_PREFIX}/', include('torneio.urls')),
+        path(f'{settings.URL_PATH_PREFIX}/admin/', admin.site.urls),
+    ]
+else:
+    urlpatterns = [
+        path('', include('torneio.urls')),
+        path('admin/', admin.site.urls),
+    ]
