@@ -4,6 +4,7 @@ from django.db import transaction
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.template.loader import render_to_string
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
 from django.views.decorators.http import require_POST
@@ -179,7 +180,7 @@ def reiniciar_torneio(request):
     torneio.save(update_fields=['status', 'iniciado_em'])
 
     if request.headers.get('x-requested-with') == 'XMLHttpRequest':
-        return JsonResponse({'ok': True, 'redirect_url': '/'})
+        return JsonResponse({'ok': True, 'redirect_url': reverse('torneio:home')})
     return redirect('torneio:home')
 
 

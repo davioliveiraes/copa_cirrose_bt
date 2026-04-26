@@ -1,5 +1,7 @@
 # Copa Cirrose BT
 
+![Tela inicial da Copa Cirrose BT](docs/copa-cirrose-bt-setup.png)
+
 Aplicacao web para gerenciar um torneio dinamico de Beach Tennis. O usuario cadastra as duplas, inicia o torneio e o sistema gera automaticamente a fase de grupos em todos contra todos, calcula a classificacao e monta o mata-mata com semifinal e final.
 
 O projeto foi pensado para uso temporario em uma VPS, sem autenticacao, em rede confiavel.
