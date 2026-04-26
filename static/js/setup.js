@@ -6,7 +6,7 @@ document.getElementById('form-dupla')?.addEventListener('submit', async (event) 
         return;
     }
 
-    const response = await fetch('/duplas/adicionar/', {
+    const response = await fetch(appUrl('/duplas/adicionar/'), {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
@@ -27,7 +27,7 @@ document.querySelectorAll('[data-remover]').forEach((button) => {
             return;
         }
 
-        const response = await fetch(`/duplas/${id}/remover/`, {
+        const response = await fetch(appUrl(`/duplas/${id}/remover/`), {
             method: 'POST',
             headers: { 'X-CSRFToken': getCsrfToken() },
         });
@@ -45,16 +45,21 @@ document.getElementById('btn-iniciar')?.addEventListener('click', async (event) 
         return;
     }
 
-    const response = await fetch('/iniciar/', {
+    const response = await fetch(appUrl('/iniciar/'), {
         method: 'POST',
         headers: { 'X-CSRFToken': getCsrfToken() },
     });
 
     if (response.ok) {
-        window.location.href = '/';
+        window.location.href = appUrl('/');
     }
 });
 
 function getCsrfToken() {
     return document.querySelector('[name=csrfmiddlewaretoken]').value;
+}
+
+function appUrl(path) {
+    const basePath = (window.APP_BASE_PATH || '').replace(/\/$/, '');
+    return `${basePath}${path}`;
 }

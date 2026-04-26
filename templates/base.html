@@ -12,6 +12,9 @@
 </head>
 <body>
     {% block content %}{% endblock %}
+    <script>
+        window.APP_BASE_PATH = "{{ app_base_path }}";
+    </script>
     {% block scripts %}{% endblock %}
 </body>
 </html>

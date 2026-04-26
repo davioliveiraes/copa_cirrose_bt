@@ -32,6 +32,8 @@ ALLOWED_HOSTS = config(
     cast=Csv(),
 )
 
+FORCE_SCRIPT_NAME = config('FORCE_SCRIPT_NAME', default='') or None
+
 
 # Application definition
 
@@ -68,6 +70,7 @@ TEMPLATES = [
                 'django.template.context_processors.request',
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
+                'torneio.context_processors.app_base_path',
             ],
         },
     },
@@ -121,7 +124,8 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
 
-STATIC_URL = 'static/'
+URL_PREFIX = FORCE_SCRIPT_NAME.rstrip('/') if FORCE_SCRIPT_NAME else ''
+STATIC_URL = f'{URL_PREFIX}/static/' if URL_PREFIX else 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
 STATICFILES_DIRS = [BASE_DIR / 'static']
 

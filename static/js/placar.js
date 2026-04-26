@@ -27,7 +27,7 @@ document.addEventListener('click', async (event) => {
     }
 
     try {
-        const data = await postJson(`/jogos/${button.dataset.clear}/limpar/`);
+        const data = await postJson(appUrl(`/jogos/${button.dataset.clear}/limpar/`));
         limparInputsDoJogo(button.dataset.clear);
         aplicarEstado(data);
         showFeedback('Placar limpo.');
@@ -91,7 +91,7 @@ async function salvarJogo(jogo) {
     }
 
     try {
-        const data = await postJson(`/jogos/${jogoId}/salvar/`, {
+        const data = await postJson(appUrl(`/jogos/${jogoId}/salvar/`), {
             sets_a: Number(setsA),
             sets_b: Number(setsB),
         });
@@ -223,6 +223,11 @@ function isSetValido(value) {
 
 function getCsrfToken() {
     return document.querySelector('[name=csrfmiddlewaretoken]').value;
+}
+
+function appUrl(path) {
+    const basePath = (window.APP_BASE_PATH || '').replace(/\/$/, '');
+    return `${basePath}${path}`;
 }
 
 function valueOrEmpty(value) {

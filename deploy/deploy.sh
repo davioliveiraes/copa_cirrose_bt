@@ -40,8 +40,23 @@ if [ ! -f .env ]; then
 SECRET_KEY=$SECRET
 DEBUG=False
 ALLOWED_HOSTS=*
+FORCE_SCRIPT_NAME=/copa_cirrose_bt
 EOF
 fi
+
+set_env_var() {
+    KEY="$1"
+    VALUE="$2"
+    if grep -q "^${KEY}=" .env; then
+        sed -i "s|^${KEY}=.*|${KEY}=${VALUE}|" .env
+    else
+        printf '%s=%s\n' "$KEY" "$VALUE" >> .env
+    fi
+}
+
+set_env_var DEBUG False
+set_env_var ALLOWED_HOSTS '*'
+set_env_var FORCE_SCRIPT_NAME /copa_cirrose_bt
 
 # Migrations + collectstatic
 python manage.py migrate --noinput
@@ -67,4 +82,4 @@ echo "Deploy concluido!"
 ENDSSH
 
 echo ""
-echo "Aplicacao no ar em: http://$VPS_IP"
+echo "Aplicacao no ar em: http://$VPS_IP/copa_cirrose_bt/"

@@ -39,6 +39,7 @@ Variaveis principais do `.env`:
 SECRET_KEY=sua-chave-secreta
 DEBUG=True
 ALLOWED_HOSTS=localhost,127.0.0.1
+FORCE_SCRIPT_NAME=
 ```
 
 ## Fluxo de Uso
@@ -69,7 +70,11 @@ Informe o IP da VPS por variavel de ambiente:
 VPS_IP=SEU_IP_AQUI bash deploy/deploy.sh
 ```
 
-O script envia o projeto para `/home/copa_cirrose_bt`, instala dependencias, cria `.env` remoto se necessario, aplica migrations, roda `collectstatic`, configura Gunicorn/Systemd e Nginx.
+O script envia o projeto para `/home/copa_cirrose_bt`, instala dependencias, cria/atualiza o `.env` remoto, aplica migrations, roda `collectstatic`, configura Gunicorn/Systemd e Nginx. A aplicacao fica disponivel em:
+
+```text
+http://SEU_IP_AQUI/copa_cirrose_bt/
+```
 
 Tambem e possivel sobrescrever usuario e diretorio remoto:
 

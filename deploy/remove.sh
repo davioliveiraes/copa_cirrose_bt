@@ -25,4 +25,4 @@ echo "Removido!"
 ENDSSH
 
 echo ""
-echo "Servidor limpo. Confirma em http://$VPS_IP — deve dar 404."
+echo "Servidor limpo. Confirma em http://$VPS_IP/copa_cirrose_bt/ — deve dar 404."
