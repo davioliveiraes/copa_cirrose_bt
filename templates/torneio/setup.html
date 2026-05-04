@@ -7,9 +7,9 @@
 <main class="app-shell setup-shell">
     <header class="hero">
         <div>
-            <p class="eyebrow">Beach Tennis · Torneio dinamico</p>
+            <p class="eyebrow">Beach Tennis · Torneio dinâmico</p>
             <h1>Copa Cirrose BT</h1>
-            <p class="tagline">Cadastre as duplas, gere todos os confrontos e acompanhe a disputa ate a final.</p>
+            <p class="tagline">O troféu é da glória, mas o fígado é de todos.</p>
         </div>
         <span class="status-pill">EM SETUP</span>
     </header>
@@ -18,7 +18,7 @@
         <div class="surface-card setup-main">
             <div class="section-title">
                 <div>
-                    <p class="eyebrow">Inscricoes</p>
+                    <p class="eyebrow">Inscrições</p>
                     <h2>Duplas cadastradas</h2>
                 </div>
                 <strong id="contador-duplas" class="counter">{{ duplas.count }} duplas cadastradas</strong>
@@ -41,13 +41,15 @@
         </div>
 
         <aside class="surface-card info-box">
-            <p class="eyebrow">Regra rapida</p>
-            <h2>Como vai funcionar</h2>
+            <p class="eyebrow">Resumo rápido</p>
+            <h2>Regras do torneio</h2>
             <ul>
-                <li>Minimo de 4 duplas para iniciar.</li>
-                <li>Total de jogos calculado automaticamente: <code>N x (N-1) / 2</code>.</li>
-                <li>Os 4 primeiros classificam para o mata-mata.</li>
-                <li>Depois de iniciar, nao e possivel adicionar ou remover duplas.</li>
+                <li>Dose coletiva na abertura do torneio.</li>
+                <li>Dose por jogador no início de cada confronto.</li>
+                <li>Fase de grupos: todos contra todos.</li>
+                <li>Classificam os 4 melhores para o mata-mata.</li>
+                <li>Todas as partidas são melhor de 5 sets.</li>
+                <li>Quem perde bebe mais. Quem ganha também bebe.</li>
             </ul>
             <div class="formula-box">
                 <span>Jogos previstos</span>
@@ -64,7 +66,7 @@
     </form>
 
     <footer class="footer-note">
-        Copa Cirrose BT · Django puro · SQLite
+        Copa Cirrose BT
     </footer>
 </main>
 {% endblock %}

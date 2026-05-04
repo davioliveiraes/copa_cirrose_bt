@@ -2,9 +2,9 @@
 
 ![Tela inicial da Copa Cirrose BT](docs/copa-cirrose-bt-setup.png)
 
-Aplicacao web para gerenciar um torneio dinamico de Beach Tennis. O usuario cadastra as duplas, inicia o torneio e o sistema gera automaticamente a fase de grupos em todos contra todos, calcula a classificacao e monta o mata-mata com semifinal e final.
+Aplicação web para gerenciar um torneio dinâmico de Beach Tennis. O usuário cadastra as duplas, inicia o torneio e o sistema gera automaticamente a fase de grupos em todos contra todos, calcula a classificação e monta o mata-mata com semifinal e final.
 
-O projeto foi pensado para uso temporario em uma VPS, sem autenticacao, em rede confiavel.
+O projeto foi pensado para uso temporário em uma VPS, sem autenticação, em rede confiável.
 
 ## Stack
 
@@ -50,7 +50,7 @@ URL_PATH_PREFIX=
 2. Cadastrar duplas, com minimo de 4.
 3. Clicar em "Iniciar Torneio".
 4. Preencher os placares conforme os jogos acontecem.
-5. Acompanhar classificacao e mata-mata em tempo real.
+5. Acompanhar classificação e mata-mata em tempo real.
 6. Exportar o relatorio final para colar no WhatsApp.
 
 ## Regras Principais
@@ -72,13 +72,13 @@ Informe o IP da VPS por variavel de ambiente:
 VPS_IP=SEU_IP_AQUI bash deploy/deploy.sh
 ```
 
-O script envia o projeto para `/home/copa_cirrose_bt`, instala dependencias, cria/atualiza o `.env` remoto, aplica migrations, roda `collectstatic`, configura Gunicorn/Systemd e Nginx. A aplicacao fica disponivel em:
+O script envia o projeto para `/home/copa_cirrose_bt`, instala dependências, cria/atualiza o `.env` remoto, aplica migrations, roda `collectstatic`, configura Gunicorn/Systemd e Nginx. A aplicação fica disponível em:
 
 ```text
 http://SEU_IP_AQUI/copa_cirrose_bt/
 ```
 
-Tambem e possivel sobrescrever usuario e diretorio remoto:
+Também é possível sobrescrever usuário e diretório remoto:
 
 ```bash
 VPS_USER=root PROJECT_DIR=/home/copa_cirrose_bt VPS_IP=SEU_IP_AQUI bash deploy/deploy.sh
@@ -86,10 +86,10 @@ VPS_USER=root PROJECT_DIR=/home/copa_cirrose_bt VPS_IP=SEU_IP_AQUI bash deploy/d
 
 ## Como Remover
 
-Execute somente quando quiser apagar a aplicacao do servidor:
+Execute somente quando quiser apagar a aplicação do servidor:
 
 ```bash
 VPS_IP=SEU_IP_AQUI bash deploy/remove.sh
 ```
 
-O script para o servico `copa`, remove a configuracao do Nginx e apaga `/home/copa_cirrose_bt`.
+O script para o serviço `copa`, remove a configuração do Nginx e apaga `/home/copa_cirrose_bt`.

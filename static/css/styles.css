@@ -1,16 +1,16 @@
 :root {
-    --bg: #fafaf7;
+    --bg: #f4f7fb;
     --surface: #ffffff;
-    --border: #e8e6df;
-    --text: #1a1a1a;
-    --text-soft: #6b6b6b;
-    --text-mute: #999999;
-    --accent: #c2410c;
-    --accent-soft: #fdf2eb;
-    --success: #166534;
-    --success-soft: #dcfce7;
-    --gold: #ca8a04;
-    --danger: #dc2626;
+    --border: #d9e1ea;
+    --text: #0b0f14;
+    --text-soft: #4b5563;
+    --text-mute: #7b8794;
+    --accent: #0f4c81;
+    --accent-soft: #e8f1fb;
+    --success: #0f4c81;
+    --success-soft: #edf4fb;
+    --gold: #111827;
+    --danger: #1f2937;
     --radius: 8px;
 }
 
@@ -50,7 +50,7 @@ input {
 
 input:focus {
     border-color: var(--accent);
-    outline: 3px solid rgba(194, 65, 12, 0.14);
+    outline: 3px solid rgba(15, 76, 129, 0.16);
 }
 
 button:disabled {
@@ -102,6 +102,12 @@ code,
     overflow-wrap: anywhere;
 }
 
+.quote-line {
+    margin-top: 8px;
+    color: var(--text);
+    font-weight: 700;
+}
+
 .meta-line {
     display: grid;
     gap: 3px;
@@ -131,7 +137,7 @@ code,
     align-items: center;
     min-height: 34px;
     padding: 0 12px;
-    border: 1px solid rgba(194, 65, 12, 0.24);
+    border: 1px solid rgba(15, 76, 129, 0.24);
     border-radius: 999px;
     background: var(--accent-soft);
     color: var(--accent);
@@ -140,7 +146,7 @@ code,
 }
 
 .status-pill.live {
-    border-color: rgba(22, 101, 52, 0.26);
+    border-color: rgba(15, 76, 129, 0.26);
     background: var(--success-soft);
     color: var(--success);
 }
@@ -275,7 +281,7 @@ code,
 
 .icon-button.danger,
 .danger-button {
-    background: #fef2f2;
+    background: #eef2f7;
     color: var(--danger);
 }
 
@@ -404,12 +410,12 @@ code,
     padding: 12px;
     border: 1px solid var(--border);
     border-radius: var(--radius);
-    background: #fffdfb;
+    background: #fbfdff;
 }
 
 .jogo.preenchido,
 .match-card.preenchido {
-    border-color: rgba(22, 101, 52, 0.28);
+    border-color: rgba(15, 76, 129, 0.28);
     background: var(--success-soft);
 }
 
@@ -458,7 +464,7 @@ code,
     width: 34px;
     height: 34px;
     border-radius: var(--radius);
-    background: #fef2f2;
+    background: #eef2f7;
     color: var(--danger);
     cursor: pointer;
     font-size: 1rem;
@@ -595,12 +601,12 @@ code,
 }
 
 .winner-card.champion {
-    border-color: rgba(202, 138, 4, 0.38);
-    background: #fffbeb;
+    border-color: rgba(15, 76, 129, 0.32);
+    background: var(--accent-soft);
 }
 
 .winner-card.champion strong {
-    color: var(--gold);
+    color: var(--accent);
 }
 
 .action-row {
@@ -668,9 +674,12 @@ code,
         grid-template-columns: repeat(2, minmax(0, 1fr));
     }
 
-    .rule-grid,
-    .dose-grid {
+    .rule-grid {
         grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+
+    .dose-grid {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
     }
 
     .content-grid {

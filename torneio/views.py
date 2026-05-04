@@ -1,4 +1,6 @@
 import json
+from io import BytesIO
+from xml.sax.saxutils import escape
 
 from django.db import transaction
 from django.http import HttpResponse, JsonResponse
@@ -8,6 +10,17 @@ from django.urls import reverse
 from django.utils import timezone
 from django.utils.html import strip_tags
 from django.views.decorators.http import require_POST
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import ParagraphStyle, getSampleStyleSheet
+from reportlab.lib.units import cm
+from reportlab.platypus import (
+    Paragraph,
+    SimpleDocTemplate,
+    Spacer,
+    Table,
+    TableStyle,
+)
 
 from .models import Dupla, Jogo, Torneio
 from .services import (
@@ -43,7 +56,7 @@ def adicionar_dupla(request):
     """POST com 'nome' -> cria dupla. Retorna JSON."""
     torneio = Torneio.get_atual()
     if torneio.status != Torneio.STATUS_SETUP:
-        return _json_error('Nao e possivel adicionar duplas com o torneio em andamento.')
+        return _json_error('Não é possível adicionar duplas com o torneio em andamento.')
 
     data = _request_data(request)
     nome = data.get('nome', '').strip()
@@ -72,7 +85,7 @@ def remover_dupla(request, dupla_id):
     """Remove dupla, somente se o torneio estiver em SETUP."""
     torneio = Torneio.get_atual()
     if torneio.status != Torneio.STATUS_SETUP:
-        return _json_error('Nao e possivel remover duplas com o torneio em andamento.')
+        return _json_error('Não é possível remover duplas com o torneio em andamento.')
 
     dupla = get_object_or_404(Dupla, pk=dupla_id, torneio=torneio)
     dupla.delete()
@@ -127,11 +140,11 @@ def salvar_placar(request, jogo_id):
     """POST com sets_a, sets_b -> salva placar e retorna JSON atualizado."""
     torneio = Torneio.get_atual()
     if torneio.status != Torneio.STATUS_ANDAMENTO:
-        return _json_error('O torneio ainda nao esta em andamento.')
+        return _json_error('O torneio ainda não está em andamento.')
 
     jogo = get_object_or_404(Jogo, pk=jogo_id, torneio=torneio)
     if not jogo.dupla_a_id or not jogo.dupla_b_id:
-        return _json_error('Este jogo ainda nao possui duplas definidas.')
+        return _json_error('Este jogo ainda não possui duplas definidas.')
 
     data = _request_data(request)
     sets_a, erro = _parse_set(data.get('sets_a'), 'sets_a')
@@ -158,7 +171,7 @@ def limpar_jogo(request, jogo_id):
     """Zera placar de um jogo especifico."""
     torneio = Torneio.get_atual()
     if torneio.status != Torneio.STATUS_ANDAMENTO:
-        return _json_error('O torneio ainda nao esta em andamento.')
+        return _json_error('O torneio ainda não está em andamento.')
 
     jogo = get_object_or_404(Jogo, pk=jogo_id, torneio=torneio)
     jogo.sets_a = None
@@ -185,45 +198,21 @@ def reiniciar_torneio(request):
 
 
 def exportar(request):
-    """Retorna texto formatado para colar no WhatsApp."""
+    """Gera um relatório PDF com o estado atual do torneio."""
     torneio = Torneio.get_atual()
     classificacao = calcular_classificacao(torneio)
     mata_mata = None
     if torneio.status == Torneio.STATUS_ANDAMENTO:
         mata_mata = calcular_mata_mata(torneio)
 
-    linhas = [f'*{torneio.nome}*', '']
-    if classificacao:
-        linhas.append('*Classificacao*')
-        for posicao, item in enumerate(classificacao, start=1):
-            linhas.append(
-                f'{posicao}. {item["nome"]} - {item["pts"]} pts '
-                f'({item["v"]}V/{item["d"]}D, saldo {item["ss"]})'
-            )
-
     jogos_grupos = torneio.jogos.filter(fase=Jogo.FASE_GRUPOS).select_related(
         'dupla_a',
         'dupla_b',
     )
-    if jogos_grupos:
-        linhas.extend(['', '*Jogos da fase de grupos*'])
-        for jogo in jogos_grupos:
-            placar = _formatar_placar(jogo)
-            linhas.append(f'{jogo.numero}. {jogo.dupla_a} x {jogo.dupla_b}: {placar}')
-
-    if mata_mata:
-        linhas.extend(['', '*Mata-mata*'])
-        for rotulo, chave in [('SF1', 'sf1'), ('SF2', 'sf2'), ('Final', 'final')]:
-            linhas.append(f'{rotulo}: {_formatar_jogo_dict(mata_mata[chave])}')
-
-        if mata_mata['campeao']:
-            linhas.extend([
-                '',
-                f'Campeao: {mata_mata["campeao"].nome}',
-                f'Vice: {mata_mata["vice"].nome}',
-            ])
-
-    return HttpResponse('\n'.join(linhas), content_type='text/plain; charset=utf-8')
+    pdf = _gerar_relatorio_pdf(torneio, classificacao, jogos_grupos, mata_mata)
+    response = HttpResponse(pdf, content_type='application/pdf')
+    response['Content-Disposition'] = 'attachment; filename="copa-cirrose-bt-relatorio.pdf"'
+    return response
 
 
 def _json_estado_torneio(torneio):
@@ -232,6 +221,200 @@ def _json_estado_torneio(torneio):
         'classificacao': calcular_classificacao(torneio),
         'mata_mata': _serializar_mata_mata(calcular_mata_mata(torneio)),
     })
+
+
+def _gerar_relatorio_pdf(torneio, classificacao, jogos_grupos, mata_mata):
+    buffer = BytesIO()
+    doc = SimpleDocTemplate(
+        buffer,
+        pagesize=A4,
+        rightMargin=1.5 * cm,
+        leftMargin=1.5 * cm,
+        topMargin=1.4 * cm,
+        bottomMargin=1.4 * cm,
+        title=f'Relatório - {torneio.nome}',
+    )
+
+    styles = getSampleStyleSheet()
+    styles.add(ParagraphStyle(
+        name='ReportTitle',
+        parent=styles['Title'],
+        fontName='Helvetica-Bold',
+        fontSize=22,
+        leading=26,
+        textColor=colors.HexColor('#0b0f14'),
+        spaceAfter=6,
+    ))
+    styles.add(ParagraphStyle(
+        name='SectionTitle',
+        parent=styles['Heading2'],
+        fontName='Helvetica-Bold',
+        fontSize=13,
+        leading=16,
+        textColor=colors.HexColor('#0f4c81'),
+        spaceBefore=14,
+        spaceAfter=8,
+    ))
+    styles.add(ParagraphStyle(
+        name='SmallText',
+        parent=styles['BodyText'],
+        fontSize=9,
+        leading=12,
+        textColor=colors.HexColor('#4b5563'),
+    ))
+    styles.add(ParagraphStyle(
+        name='TableText',
+        parent=styles['BodyText'],
+        fontSize=8,
+        leading=10,
+        textColor=colors.HexColor('#0b0f14'),
+    ))
+    styles.add(ParagraphStyle(
+        name='TableHeader',
+        parent=styles['TableText'],
+        fontName='Helvetica-Bold',
+        textColor=colors.white,
+    ))
+
+    story = [
+        Paragraph(_pdf_text(torneio.nome), styles['ReportTitle']),
+        Paragraph(
+            'O troféu é da glória, mas o fígado é de todos.',
+            styles['SmallText'],
+        ),
+        Paragraph(_pdf_meta_torneio(torneio), styles['SmallText']),
+        Spacer(1, 8),
+    ]
+
+    story.append(Paragraph('Resumo rápido', styles['SectionTitle']))
+    story.append(_pdf_table([
+        ['Abertura', 'Dose coletiva antes do primeiro jogo.'],
+        ['Confronto', 'Uma dose por jogador ao entrar em quadra.'],
+        ['3x0', 'Perdedor 3 doses por jogador. Vencedor 1 dose por jogador.'],
+        ['3x1 ou 3x2', 'Perdedor 2 doses por jogador. Vencedor 1 dose por jogador.'],
+    ], [4.0 * cm, 12.5 * cm], styles))
+
+    story.append(Paragraph('Classificação', styles['SectionTitle']))
+    if classificacao:
+        linhas = [['Pos', 'Dupla', 'J', 'V', 'D', 'SF', 'SC', 'SS', 'Pts']]
+        for posicao, item in enumerate(classificacao, start=1):
+            linhas.append([
+                str(posicao),
+                item['nome'],
+                str(item['j']),
+                str(item['v']),
+                str(item['d']),
+                str(item['sf']),
+                str(item['sc']),
+                str(item['ss']),
+                str(item['pts']),
+            ])
+        story.append(_pdf_table(
+            linhas,
+            [1.1 * cm, 6.2 * cm, 1.1 * cm, 1.1 * cm, 1.1 * cm,
+             1.2 * cm, 1.2 * cm, 1.2 * cm, 1.4 * cm],
+            styles,
+        ))
+    else:
+        story.append(Paragraph('Nenhuma classificação disponível.', styles['SmallText']))
+
+    story.append(Paragraph('Jogos da fase de grupos', styles['SectionTitle']))
+    if jogos_grupos:
+        linhas = [['#', 'Dupla A', 'Placar', 'Dupla B']]
+        for jogo in jogos_grupos:
+            linhas.append([
+                str(jogo.numero),
+                jogo.dupla_a.nome,
+                _formatar_placar(jogo),
+                jogo.dupla_b.nome,
+            ])
+        story.append(_pdf_table(
+            linhas,
+            [1.1 * cm, 6.2 * cm, 2.0 * cm, 6.2 * cm],
+            styles,
+        ))
+    else:
+        story.append(Paragraph('Nenhum jogo gerado ainda.', styles['SmallText']))
+
+    if mata_mata:
+        story.append(Paragraph('Mata-mata', styles['SectionTitle']))
+        linhas = [['Fase', 'Confronto', 'Vencedor']]
+        for rotulo, chave in [('SF1', 'sf1'), ('SF2', 'sf2'), ('Final', 'final')]:
+            jogo = mata_mata[chave]
+            vencedor = jogo['vencedor'].nome if jogo['vencedor'] else 'Pendente'
+            linhas.append([
+                rotulo,
+                _formatar_jogo_dict(jogo),
+                vencedor,
+            ])
+        story.append(_pdf_table(
+            linhas,
+            [1.8 * cm, 10.8 * cm, 3.9 * cm],
+            styles,
+        ))
+
+        if mata_mata['campeao']:
+            story.append(Paragraph('Resultado final', styles['SectionTitle']))
+            story.append(_pdf_table([
+                ['Campeão', mata_mata['campeao'].nome],
+                ['Vice', mata_mata['vice'].nome],
+            ], [4.0 * cm, 12.5 * cm], styles))
+
+    doc.build(story, onFirstPage=_pdf_footer, onLaterPages=_pdf_footer)
+    return buffer.getvalue()
+
+
+def _pdf_meta_torneio(torneio):
+    gerado_em = timezone.localtime().strftime('%d/%m/%Y %H:%M')
+    iniciado = (
+        timezone.localtime(torneio.iniciado_em).strftime('%d/%m/%Y %H:%M')
+        if torneio.iniciado_em
+        else 'não iniciado'
+    )
+    return (
+        f'Status: {torneio.get_status_display()} | '
+        f'Início: {iniciado} | '
+        f'Gerado em: {gerado_em}'
+    )
+
+
+def _pdf_text(value):
+    return escape(str(value))
+
+
+def _pdf_table(rows, col_widths, styles):
+    table_rows = []
+    for row_index, row in enumerate(rows):
+        style_name = 'TableHeader' if row_index == 0 else 'TableText'
+        table_rows.append([
+            Paragraph(_pdf_text(cell), styles[style_name])
+            for cell in row
+        ])
+
+    table = Table(table_rows, colWidths=col_widths, repeatRows=1)
+    table.setStyle(TableStyle([
+        ('BACKGROUND', (0, 0), (-1, 0), colors.HexColor('#0f4c81')),
+        ('TEXTCOLOR', (0, 0), (-1, 0), colors.white),
+        ('FONTNAME', (0, 0), (-1, 0), 'Helvetica-Bold'),
+        ('GRID', (0, 0), (-1, -1), 0.35, colors.HexColor('#d9e1ea')),
+        ('BACKGROUND', (0, 1), (-1, -1), colors.white),
+        ('ROWBACKGROUNDS', (0, 1), (-1, -1), [colors.white, colors.HexColor('#f4f7fb')]),
+        ('VALIGN', (0, 0), (-1, -1), 'TOP'),
+        ('LEFTPADDING', (0, 0), (-1, -1), 6),
+        ('RIGHTPADDING', (0, 0), (-1, -1), 6),
+        ('TOPPADDING', (0, 0), (-1, -1), 5),
+        ('BOTTOMPADDING', (0, 0), (-1, -1), 5),
+    ]))
+    return table
+
+
+def _pdf_footer(canvas, doc):
+    canvas.saveState()
+    canvas.setFont('Helvetica', 8)
+    canvas.setFillColor(colors.HexColor('#7b8794'))
+    canvas.drawString(1.5 * cm, 1.0 * cm, 'Copa Cirrose BT')
+    canvas.drawRightString(19.5 * cm, 1.0 * cm, f'Página {doc.page}')
+    canvas.restoreState()
 
 
 def _render_lista_duplas(request, torneio):
@@ -244,12 +427,12 @@ def _render_lista_duplas(request, torneio):
 
 def _parse_set(valor, campo):
     if isinstance(valor, bool):
-        return None, f'O campo {campo} deve ser um numero inteiro.'
+        return None, f'O campo {campo} deve ser um número inteiro.'
 
     try:
         sets = int(valor)
     except (TypeError, ValueError):
-        return None, f'O campo {campo} deve ser um numero inteiro.'
+        return None, f'O campo {campo} deve ser um número inteiro.'
 
     if sets < 0 or sets > 3:
         return None, f'O campo {campo} deve estar entre 0 e 3.'
@@ -270,15 +453,15 @@ def _validar_nome_dupla(nome):
     if not nome:
         return 'Informe o nome da dupla.'
     if len(nome) > 100:
-        return 'O nome da dupla deve ter no maximo 100 caracteres.'
+        return 'O nome da dupla deve ter no máximo 100 caracteres.'
     if strip_tags(nome) != nome:
-        return 'O nome da dupla nao pode conter HTML.'
+        return 'O nome da dupla não pode conter HTML.'
     return None
 
 
 def _validar_placar(sets_a, sets_b):
     if sets_a == sets_b:
-        return 'O placar nao pode terminar empatado.'
+        return 'O placar não pode terminar empatado.'
     if 3 not in [sets_a, sets_b]:
         return 'Uma dupla precisa vencer 3 sets.'
     return None

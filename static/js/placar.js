@@ -37,14 +37,8 @@ document.addEventListener('click', async (event) => {
 });
 
 exportButton?.addEventListener('click', async () => {
-    try {
-        const response = await fetch(exportButton.dataset.exportUrl);
-        const text = await response.text();
-        await navigator.clipboard.writeText(text);
-        showFeedback('Relatorio copiado.');
-    } catch (error) {
-        showFeedback('Nao foi possivel copiar o relatorio.', true);
-    }
+    window.location.href = exportButton.dataset.exportUrl;
+    showFeedback('Gerando relatório em PDF.');
 });
 
 reiniciarForm?.addEventListener('submit', async (event) => {
@@ -55,7 +49,7 @@ reiniciarForm?.addEventListener('submit', async (event) => {
         return;
     }
 
-    const segunda = window.confirm('Confirmar reinicio definitivo? Esta acao nao pode ser desfeita.');
+    const segunda = window.confirm('Confirmar reinício definitivo? Esta ação não pode ser desfeita.');
     if (!segunda) {
         return;
     }
@@ -86,7 +80,7 @@ async function salvarJogo(jogo) {
     }
 
     if (!isSetValido(setsA) || !isSetValido(setsB)) {
-        showFeedback('Use apenas numeros inteiros de 0 a 3.', true);
+        showFeedback('Use apenas números inteiros de 0 a 3.', true);
         return;
     }
 
@@ -115,7 +109,7 @@ async function postJson(url, body = null) {
     });
     const data = await response.json();
     if (!response.ok || !data.ok) {
-        throw new Error(data.error || 'Nao foi possivel concluir a acao.');
+        throw new Error(data.error || 'Não foi possível concluir a ação.');
     }
     return data;
 }
@@ -156,15 +150,15 @@ function renderMataMata(mataMata) {
 
     mataMataGrid.innerHTML = `
         <div class="knockout-column">
-            ${renderJogoMataMata('SF1 · 1o x 4o', mataMata.sf1, 'aguardando grupos')}
-            ${renderJogoMataMata('SF2 · 2o x 3o', mataMata.sf2, 'aguardando grupos')}
+            ${renderJogoMataMata('SF1 · 1º x 4º', mataMata.sf1, 'aguardando grupos')}
+            ${renderJogoMataMata('SF2 · 2º x 3º', mataMata.sf2, 'aguardando grupos')}
         </div>
         <div class="knockout-column final-column">
             ${renderJogoMataMata('Final', mataMata.final, 'aguardando SF1 e SF2')}
         </div>
         <div class="knockout-column winners-column">
             <article class="winner-card champion">
-                <span>Campeao</span>
+                <span>Campeão</span>
                 <strong id="campeao-nome">${mataMata.campeao ? escapeHtml(mataMata.campeao.nome) : 'aguardando final'}</strong>
             </article>
             <article class="winner-card">

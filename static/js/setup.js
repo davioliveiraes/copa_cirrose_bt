@@ -41,7 +41,7 @@ document.querySelectorAll('[data-remover]').forEach((button) => {
 document.getElementById('btn-iniciar')?.addEventListener('click', async (event) => {
     event.preventDefault();
 
-    if (!window.confirm('Iniciar o torneio? Nao sera possivel adicionar/remover duplas depois.')) {
+    if (!window.confirm('Iniciar o torneio? Não será possível adicionar/remover duplas depois.')) {
         return;
     }
 

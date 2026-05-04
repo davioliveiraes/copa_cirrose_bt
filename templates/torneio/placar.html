@@ -14,6 +14,7 @@
                 <span>{{ jogos_grupos.count }} jogos · grupos</span>
                 <span>Bo5 melhor de 5 sets</span>
             </p>
+            <p class="tagline quote-line">O troféu é da glória, mas o fígado é de todos.</p>
         </div>
         <span class="status-pill live">AO VIVO</span>
     </header>
@@ -21,33 +22,37 @@
     <section class="rule-grid">
         <article class="rule-card">
             <span>01</span>
-            <h2>Grupos</h2>
-            <p>Todos contra todos. Vitoria vale 3 pontos.</p>
+            <h2>Resumo Rápido</h2>
+            <p>Dose coletiva na abertura, dose por jogador no início de cada confronto e tudo melhor de 5 sets.</p>
         </article>
-        <article class="rule-card gold">
+        <article class="rule-card">
             <span>02</span>
-            <h2>Mata-Mata</h2>
-            <p>1o x 4o e 2o x 3o. Final apos as semis.</p>
+            <h2>Formato</h2>
+            <p>Fase de grupos todos contra todos. Os 4 melhores avançam para semifinais e final.</p>
         </article>
         <article class="rule-card">
             <span>03</span>
-            <h2>Doses</h2>
-            <p>Apenas visual. Nao altera a classificacao.</p>
+            <h2>Regra Etílica</h2>
+            <p>Quem perde bebe mais. Quem ganha também bebe. Não altera a classificação.</p>
         </article>
     </section>
 
     <section class="dose-grid" aria-label="Tabela de doses">
         <article class="dose-card">
+            <strong>Abertura</strong>
+            <span>Dose coletiva antes do primeiro jogo.</span>
+        </article>
+        <article class="dose-card">
+            <strong>Confronto</strong>
+            <span>Uma dose por jogador ao entrar em quadra.</span>
+        </article>
+        <article class="dose-card">
             <strong>3x0</strong>
-            <span>Perdedor 3 doses · vencedor 1 dose</span>
+            <span>Perdedor 3 doses por jogador. Vencedor 1 dose por jogador.</span>
         </article>
         <article class="dose-card">
-            <strong>3x1</strong>
-            <span>Perdedor 2 doses · vencedor 1 dose</span>
-        </article>
-        <article class="dose-card">
-            <strong>3x2</strong>
-            <span>Perdedor 2 doses · vencedor 1 dose</span>
+            <strong>3x1 ou 3x2</strong>
+            <span>Perdedor 2 doses por jogador. Vencedor 1 dose por jogador.</span>
         </article>
     </section>
 
@@ -82,7 +87,7 @@
             <div class="section-title">
                 <div>
                     <p class="eyebrow">Tabela</p>
-                    <h2>Classificacao</h2>
+                    <h2>Classificação</h2>
                 </div>
             </div>
             <div class="table-wrap">
@@ -133,8 +138,8 @@
 
         <div id="mata-mata-grid" class="knockout-grid">
             <div class="knockout-column">
-                {% include 'torneio/_jogo_mata_mata.html' with titulo='SF1 · 1o x 4o' jogo=mata_mata.sf1 aguardando='aguardando grupos' %}
-                {% include 'torneio/_jogo_mata_mata.html' with titulo='SF2 · 2o x 3o' jogo=mata_mata.sf2 aguardando='aguardando grupos' %}
+                {% include 'torneio/_jogo_mata_mata.html' with titulo='SF1 · 1º x 4º' jogo=mata_mata.sf1 aguardando='aguardando grupos' %}
+                {% include 'torneio/_jogo_mata_mata.html' with titulo='SF2 · 2º x 3º' jogo=mata_mata.sf2 aguardando='aguardando grupos' %}
             </div>
 
             <div class="knockout-column final-column">
@@ -143,7 +148,7 @@
 
             <div class="knockout-column winners-column">
                 <article class="winner-card champion">
-                    <span>Campeao</span>
+                    <span>Campeão</span>
                     <strong id="campeao-nome">{% if mata_mata.campeao %}{{ mata_mata.campeao.nome }}{% else %}aguardando final{% endif %}</strong>
                 </article>
                 <article class="winner-card">
@@ -156,7 +161,7 @@
 
     <section class="action-row">
         <button id="btn-exportar" class="secondary-button" type="button" data-export-url="{% url 'torneio:exportar' %}">
-            Exportar Relatório
+            Exportar Relatório PDF
         </button>
         <form id="form-reiniciar" method="post" action="{% url 'torneio:reiniciar_torneio' %}">
             {% csrf_token %}
